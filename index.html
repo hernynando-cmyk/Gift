@@ -97,7 +97,7 @@
     <!-- Música -->
     <audio id="bgMusic" src="audio/cancion.mp3" loop></audio>
 
-    <!-- Three.js SOLO (sin OrbitControls) -->
+    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <script>
@@ -106,31 +106,31 @@
 
         const photoItems = [
             { img: "img/foto1.jpeg",  text: "Te amo" },
-            { img: "img/foto2.jpeg",  text: "Mi amor" },
+            { img: "img/foto2.jpeg",  text: "Mi cosita," },
             { img: "img/foto3.jpeg",  text: "Mi princesa" },
-            { img: "img/foto4.jpeg",  text: "Mi diosa" },
-            { img: "img/foto5.jpeg",  text: "Mi vida" },
-            { img: "img/foto6.jpeg",  text: "Eres preciosa" },
-            { img: "img/foto7.jpeg",  text: "Mi locura bonita" },
-            { img: "img/foto8.jpeg",  text: "Mi compañera" },
-            { img: "img/foto9.jpeg",  text: "Mi lugar seguro" },
-            { img: "img/foto10.jpeg", text: "Mi felicidad" },
-            { img: "img/foto11.jpeg", text: "Mi equipo favorito" },
-            { img: "img/foto12.jpeg", text: "Momentos contigo" },
-            { img: "img/foto13.jpeg", text: "Sonrisa que amo" },
-            { img: "img/foto14.jpeg", text: "Mi universo" },
-            { img: "img/foto15.jpeg", text: "Mi mejor historia" },
-            { img: "img/foto16.jpeg", text: "Eres mi hogar" },
+            { img: "img/foto4.jpeg",  text: "Eres el sueño" },
+            { img: "img/foto5.jpeg",  text: "que nunca" },
+            { img: "img/foto6.jpeg",  text: "quiero despertar," },
+            { img: "img/foto7.jpeg",  text: "la melodía" },
+            { img: "img/foto8.jpeg",  text: "que siempre" },
+            { img: "img/foto9.jpeg",  text: "quiero escuchar." },
+            { img: "img/foto10.jpeg", text: "Mi felicidad," },
+            { img: "img/foto11.jpeg", text: "Mi equipo favorito," },
+            { img: "img/foto12.jpeg", text: "Mi lugar seguro" },
+            { img: "img/foto13.jpeg", text: "No fuiste" },
+            { img: "img/foto14.jpeg", text: "antes ni después," },
+            { img: "img/foto15.jpeg", text: "fuiste justo" },
+            { img: "img/foto16.jpeg", text: "a tiempo" },
             { img: "img/foto17.jpeg", text: "Gracias por todo" },
             { img: "img/foto18.jpeg", text: "Te elijo siempre" },
             { img: "img/foto19.jpeg", text: "Amor de mi vida" },
             { img: "img/foto20.jpeg", text: "Mi persona favorita" },
             { img: "img/foto21.jpeg", text: "Mi aventura" },
             { img: "img/foto22.jpeg", text: "Mi luz" },
-            { img: "img/foto23.jpeg", text: "Mi vibe" },
-            { img: "img/foto24.jpeg", text: "Mi paz" },
-            { img: "img/foto25.jpeg", text: "Mi alegría" },
-            { img: "img/foto26.jpeg", text: "Mi risa" },
+            { img: "img/foto23.jpeg", text: "Dame la mano" },
+            { img: "img/foto24.jpeg", text: "y danzaremos;" },
+            { img: "img/foto25.jpeg", text: "dame la mano" },
+            { img: "img/foto26.jpeg", text: "y me amarás." },
             { img: "img/foto27.jpeg", text: "Mi fiesta" },
             { img: "img/foto28.jpeg", text: "Mi complicidad" },
             { img: "img/foto29.jpeg", text: "Mi mejor plan" },
@@ -144,8 +144,8 @@
             { img: "img/foto37.jpeg", text: "Mi inspiración" },
             { img: "img/foto38.jpeg", text: "Mi mejor decisión" },
             { img: "img/foto39.jpeg", text: "Mi destino" },
-            { img: "img/foto40.jpeg", text: "Te amo infinito" },
-            { img: "img/foto41.jpeg", text: "Fin del universo: tú y yo" }
+            { img: "img/foto40.jpeg", text: "Te amo 3 millones" },
+            { img: "img/foto41.jpeg", text: "tú y yo por siempre" }
         ];
 
         // ===== 2. ESCENA THREE.JS =====
@@ -255,27 +255,40 @@
         const orbitObjects = [];
         const baseRadius = 13;
 
+        // Crear fotos + textos
         photoItems.forEach((item, index) => {
             const angle = (index / photoItems.length) * Math.PI * 2;
 
             const tex = textureLoader.load(item.img);
-            const planeGeo = new THREE.PlaneGeometry(3.5, 3.5);
+
+            // Fotos un poco más pequeñas (base)
+            const planeGeo = new THREE.PlaneGeometry(1, 1);
             const planeMat = new THREE.MeshBasicMaterial({
                 map: tex,
                 transparent: true
             });
             const photoMesh = new THREE.Mesh(planeGeo, planeMat);
+            const basePhotoScale = 2.4; // tamaño normal
+            photoMesh.scale.set(basePhotoScale, basePhotoScale, 1);
             scene.add(photoMesh);
 
+            // Texto algo más compacto
             const label = createTextSprite(item.text);
+            const baseLabelScaleX = 4.2;
+            const baseLabelScaleY = 1.3;
+            label.scale.set(baseLabelScaleX, baseLabelScaleY, 1);
             scene.add(label);
 
             orbitObjects.push({
                 angle: angle,
                 radius: baseRadius + (index % 2) * 1.5,
-                speed: 0.003 + Math.random() * 0.002,
+                // Giro más lento
+                speed: 0.0015 + Math.random() * 0.001,
                 photo: photoMesh,
-                label: label
+                label: label,
+                basePhotoScale: basePhotoScale,
+                baseLabelScaleX: baseLabelScaleX,
+                baseLabelScaleY: baseLabelScaleY
             });
         });
 
@@ -319,6 +332,7 @@
 
                 orbitObjects.forEach((obj) => {
                     obj.angle += obj.speed;
+
                     const x = Math.cos(obj.angle) * obj.radius;
                     const z = Math.sin(obj.angle) * obj.radius;
                     const y = 1.5 + Math.sin(obj.angle * 2) * 0.4;
@@ -326,11 +340,39 @@
                     obj.photo.position.set(x, y, z);
                     obj.label.position.set(x, y + 3, z);
 
+                    // Miran siempre hacia la cámara
                     obj.photo.lookAt(camera.position);
                     obj.label.lookAt(camera.position);
+
+                    // --- Efecto "zoom" cuando pasan al frente ---
+                    // Vector desde el centro hacia la cámara (solo XZ)
+                    const camDir = new THREE.Vector3(
+                        camera.position.x,
+                        0,
+                        camera.position.z
+                    ).normalize();
+
+                    // Vector desde el centro hacia la foto (solo XZ)
+                    const photoDir = new THREE.Vector3(
+                        obj.photo.position.x,
+                        0,
+                        obj.photo.position.z
+                    ).normalize();
+
+                    // Alineación entre 0 y 1 (1 = de frente)
+                    let alignment = camDir.dot(photoDir);
+                    alignment = THREE.MathUtils.clamp(alignment, 0, 1);
+
+                    // Escala suave: normal + 30% al frente
+                    const photoScale = obj.basePhotoScale * (1 + 0.3 * alignment);
+                    obj.photo.scale.set(photoScale, photoScale, 1);
+
+                    const labelScaleX = obj.baseLabelScaleX * (1 + 0.25 * alignment);
+                    const labelScaleY = obj.baseLabelScaleY * (1 + 0.25 * alignment);
+                    obj.label.scale.set(labelScaleX, labelScaleY, 1);
                 });
 
-                // Cámara girando alrededor del centro
+                // Cámara girando alrededor del centro (más suave)
                 camAngle += 0.0008;
                 camera.position.x = Math.sin(camAngle) * 26;
                 camera.position.z = Math.cos(camAngle) * 26;
