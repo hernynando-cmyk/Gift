@@ -61,7 +61,6 @@
             z-index: 5;
         }
 
-        /* Cabeza azulada tipo cometa real */
         #comet-head {
             position: absolute;
             width: 30px;
@@ -74,7 +73,6 @@
             transform: translateX(-200px);
         }
 
-        /* Rastro largo azul/morado */
         #comet-tail {
             position: absolute;
             top: 13px;
@@ -155,12 +153,8 @@
         const cometText = document.getElementById("comet-text");
 
         let cometStartTime = null;
-
-        // Velocidad del cometa (más grande = más lento)
-        const COMET_DURATION = 50000; // 50 s
-
-        // Qué porcentaje del recorrido tarda en escribir toda la frase
-        const TEXT_PORTION = 0.7;
+        const COMET_DURATION = 50000; // ms (más grande = más lento)
+        const TEXT_PORTION = 0.7;     // 70% del recorrido para completar la frase
 
         function updateComet(time) {
             if (!cometStartTime) cometStartTime = time;
@@ -174,32 +168,32 @@
             const headX  = startX + (endX - startX) * progress;
 
             // Cabeza
-            cometHead.style.transform = `translateX(${headX}px)`;
+            cometHead.style.transform = "translateX(" + headX + "px)";
 
             // Cola
-            const maxTrail  = W * 0.7;
-            const trailEnd  = headX;
+            const maxTrail   = W * 0.7;
+            const trailEnd   = headX;
             const trailStart = Math.max(trailEnd - maxTrail, 0);
             const trailWidth = Math.max(trailEnd - trailStart, 0);
 
-            cometTail.style.left  = `${trailStart}px`;
-            cometTail.style.width = `${trailWidth}px`;
+            cometTail.style.left  = trailStart + "px";
+            cometTail.style.width = trailWidth + "px";
 
-            // Texto (se completa antes del final del recorrido)
+            // Texto
             const textProgress = Math.min(1, t / (COMET_DURATION * TEXT_PORTION));
             const chars = Math.floor(textProgress * cometMessage.length);
             cometText.textContent = cometMessage.slice(0, chars);
 
             const textCenter = trailStart + trailWidth * 0.5;
             const textX = Math.min(Math.max(textCenter - 180, 10), W - 220);
-            cometText.style.left = `${textX}px`;
+            cometText.style.left = textX + "px";
         }
 
         /* ============================================================
            2. UNIVERSO 3D
            ============================================================ */
         const canvas = document.getElementById("scene");
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
 
         const scene = new THREE.Scene();
@@ -213,8 +207,8 @@
         );
         camera.position.set(0, 10, 26);
 
-        // Controles de órbita (arrastrar con el mouse / dedo)
-        let controls = null;
+        // Controles de órbita
+        var controls = null;
         if (THREE.OrbitControls) {
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
@@ -229,15 +223,15 @@
 
         // Luces
         scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-        const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+        var dir = new THREE.DirectionalLight(0xffffff, 0.8);
         dir.position.set(10, 15, 5);
         scene.add(dir);
 
         // Estrellas
-        const starGeo = new THREE.BufferGeometry();
-        const starCount = 900;
-        const starPos = [];
-        for (let i = 0; i < starCount; i++) {
+        var starGeo = new THREE.BufferGeometry();
+        var starCount = 900;
+        var starPos = [];
+        for (var i = 0; i < starCount; i++) {
             starPos.push(
                 (Math.random() - 0.5) * 400,
                 (Math.random() - 0.5) * 400,
@@ -247,18 +241,18 @@
         starGeo.setAttribute("position", new THREE.Float32BufferAttribute(starPos, 3));
         scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.9 })));
 
-        const textureLoader = new THREE.TextureLoader();
+        var textureLoader = new THREE.TextureLoader();
 
         // Planeta
-        const planetTexture = textureLoader.load("img/planeta.png");
-        const planet = new THREE.Mesh(
+        var planetTexture = textureLoader.load("img/planeta.png");
+        var planet = new THREE.Mesh(
             new THREE.SphereGeometry(4, 64, 64),
             new THREE.MeshStandardMaterial({ map: planetTexture })
         );
         scene.add(planet);
 
         // Anillo
-        const ring = new THREE.Mesh(
+        var ring = new THREE.Mesh(
             new THREE.RingGeometry(6.5, 7.1, 80),
             new THREE.MeshBasicMaterial({
                 color: 0xff4d94,
@@ -270,9 +264,9 @@
         ring.rotation.x = Math.PI / 2.3;
         scene.add(ring);
 
-        // Luna con textura realista (guarda la imagen como img/luna.png)
-        const moonTexture = textureLoader.load("img/luna.png");
-        const moon = new THREE.Mesh(
+        // Luna (guarda tu textura como img/luna.png)
+        var moonTexture = textureLoader.load("img/luna.png");
+        var moon = new THREE.Mesh(
             new THREE.SphereGeometry(1.6, 48, 48),
             new THREE.MeshStandardMaterial({
                 map: moonTexture,
@@ -285,10 +279,10 @@
 
         // Texto sprite
         function createTextSprite(message) {
-            const cvs = document.createElement("canvas");
-            const ctx = cvs.getContext("2d");
-            const width = 512;
-            const height = 128;
+            var cvs = document.createElement("canvas");
+            var ctx = cvs.getContext("2d");
+            var width = 512;
+            var height = 128;
             cvs.width = width;
             cvs.height = height;
 
@@ -301,17 +295,17 @@
             ctx.shadowBlur = 10;
             ctx.fillText(message, width / 2, height / 2);
 
-            const texture = new THREE.CanvasTexture(cvs);
-            const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
-            const sprite = new THREE.Sprite(material);
+            var texture = new THREE.CanvasTexture(cvs);
+            var material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            var sprite = new THREE.Sprite(material);
             sprite.scale.set(6, 1.8, 1);
             return sprite;
         }
 
-        const orbitObjects = [];
+        var orbitObjects = [];
 
-        // Lista de fotos
-        const photoItems = [
+        // Fotos
+        var photoItems = [
             { img: "img/foto1.jpeg", text: "Te amo" },
             { img: "img/foto2.jpeg", text: "Mi amor" },
             { img: "img/foto3.jpeg", text: "Mi princesa" },
@@ -355,55 +349,54 @@
             { img: "img/foto41.jpeg", text: "Fin del universo: tú y yo" }
         ];
 
-        // Más dispersión: radios y alturas aleatorias
-        const minRadius = 16;
-        const maxRadius = 26;
+        var minRadius = 16;
+        var maxRadius = 26;
 
-        photoItems.forEach((item, index) => {
-            const angle = (index / photoItems.length) * Math.PI * 2;
+        photoItems.forEach(function (item, index) {
+            var angle = (index / photoItems.length) * Math.PI * 2;
 
-            const tex = textureLoader.load(item.img);
-            const geo = new THREE.PlaneGeometry(1, 1);
-            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
-            const photo = new THREE.Mesh(geo, mat);
+            var tex = textureLoader.load(item.img);
+            var geo = new THREE.PlaneGeometry(1, 1);
+            var mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
+            var photo = new THREE.Mesh(geo, mat);
 
-            const basePhotoScale = 2.0;
+            var basePhotoScale = 2.0;
             photo.scale.set(basePhotoScale, basePhotoScale, 1);
             scene.add(photo);
 
-            const label = createTextSprite(item.text);
-            const baseLabelScaleX = 3.8;
-            const baseLabelScaleY = 1.2;
+            var label = createTextSprite(item.text);
+            var baseLabelScaleX = 3.8;
+            var baseLabelScaleY = 1.2;
             label.scale.set(baseLabelScaleX, baseLabelScaleY, 1);
             scene.add(label);
 
-            const radius = minRadius + Math.random() * (maxRadius - minRadius);
-            const yBase  = -1 + Math.random() * 4;
-            const yAmp   = 0.6 + Math.random() * 0.5;
+            var radius = minRadius + Math.random() * (maxRadius - minRadius);
+            var yBase  = -1 + Math.random() * 4;
+            var yAmp   = 0.6 + Math.random() * 0.5;
 
             orbitObjects.push({
-                angle,
-                radius,
+                angle: angle,
+                radius: radius,
                 speed: 0.0012 + Math.random() * 0.001,
-                photo,
-                label,
-                basePhotoScale,
-                baseLabelScaleX,
-                baseLabelScaleY,
-                yBase,
-                yAmp
+                photo: photo,
+                label: label,
+                basePhotoScale: basePhotoScale,
+                baseLabelScaleX: baseLabelScaleX,
+                baseLabelScaleY: baseLabelScaleY,
+                yBase: yBase,
+                yAmp: yAmp
             });
         });
 
         // Corazones flotando
         function spawnHeart() {
-            const h = document.createElement("div");
+            var h = document.createElement("div");
             h.className = "heart";
             h.textContent = "❤";
-            h.style.left = Math.random() * 100 + "vw";
-            h.style.animationDuration = 8 + Math.random() * 6 + "s";
+            h.style.left = (Math.random() * 100) + "vw";
+            h.style.animationDuration = (8 + Math.random() * 6) + "s";
             document.body.appendChild(h);
-            setTimeout(() => h.remove(), 14000);
+            setTimeout(function () { h.remove(); }, 14000);
         }
         setInterval(spawnHeart, 1200);
 
@@ -412,12 +405,12 @@
             renderer.setSize(window.innerWidth, window.innerHeight, false);
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-            cometStartTime = null; // recalcular trayectoria del cometa
+            cometStartTime = null;
         }
         window.addEventListener("resize", onResize);
         onResize();
 
-        let started = false;
+        var started = false;
 
         function animate(time) {
             requestAnimationFrame(animate);
@@ -426,16 +419,16 @@
                 planet.rotation.y += 0.002;
                 ring.rotation.z += 0.001;
 
-                const t = Date.now() * 0.0004;
+                var t = Date.now() * 0.0004;
                 moon.position.x = -13 + Math.cos(t) * 3;
                 moon.position.z = -15 + Math.sin(t) * 3;
 
-                orbitObjects.forEach(obj => {
+                orbitObjects.forEach(function (obj) {
                     obj.angle += obj.speed;
 
-                    const x = Math.cos(obj.angle) * obj.radius;
-                    const z = Math.sin(obj.angle) * obj.radius;
-                    const y = obj.yBase + Math.sin(obj.angle * 2) * obj.yAmp;
+                    var x = Math.cos(obj.angle) * obj.radius;
+                    var z = Math.sin(obj.angle) * obj.radius;
+                    var y = obj.yBase + Math.sin(obj.angle * 2) * obj.yAmp;
 
                     obj.photo.position.set(x, y, z);
                     obj.label.position.set(x, y + 3, z);
@@ -443,27 +436,25 @@
                     obj.photo.lookAt(camera.position);
                     obj.label.lookAt(camera.position);
 
-                    const camDir = new THREE.Vector3(camera.position.x, 0, camera.position.z).normalize();
-                    const photoDir = new THREE.Vector3(x, 0, z).normalize();
-                    let alignment = camDir.dot(photoDir);
+                    var camDir = new THREE.Vector3(camera.position.x, 0, camera.position.z).normalize();
+                    var photoDir = new THREE.Vector3(x, 0, z).normalize();
+                    var alignment = camDir.dot(photoDir);
                     if (alignment < 0) alignment = 0;
-                    const factor = Math.max(0, alignment - 0.6) / 0.4;
+                    var factor = Math.max(0, alignment - 0.6) / 0.4;
 
-                    const targetPhotoScale = obj.basePhotoScale * (1 + 0.8 * factor);
-                    const targetLabelScaleX = obj.baseLabelScaleX * (1 + 0.6 * factor);
-                    const targetLabelScaleY = obj.baseLabelScaleY * (1 + 0.6 * factor);
+                    var targetPhotoScale   = obj.basePhotoScale   * (1 + 0.8 * factor);
+                    var targetLabelScaleX  = obj.baseLabelScaleX  * (1 + 0.6 * factor);
+                    var targetLabelScaleY  = obj.baseLabelScaleY  * (1 + 0.6 * factor);
 
-                    obj.photo.scale.x += (targetPhotoScale - obj.photo.scale.x) * 0.18;
-                    obj.photo.scale.y += (targetPhotoScale - obj.photo.scale.y) * 0.18;
+                    obj.photo.scale.x += (targetPhotoScale  - obj.photo.scale.x) * 0.18;
+                    obj.photo.scale.y += (targetPhotoScale  - obj.photo.scale.y) * 0.18;
 
                     obj.label.scale.x += (targetLabelScaleX - obj.label.scale.x) * 0.18;
                     obj.label.scale.y += (targetLabelScaleY - obj.label.scale.y) * 0.18;
                 });
 
-                // Cometa
                 updateComet(time);
 
-                // Controles de cámara
                 if (controls) controls.update();
             }
 
@@ -472,17 +463,27 @@
         animate();
 
         /* ============================================================
-           3. INICIO
+           3. INICIO (SIN async/await)
            ============================================================ */
-        const overlay = document.getElementById("overlay");
-        const startBtn = document.getElementById("startBtn");
-        const bgMusic = document.getElementById("bgMusic");
+        var overlay = document.getElementById("overlay");
+        var startBtn = document.getElementById("startBtn");
+        var bgMusic  = document.getElementById("bgMusic");
 
-        startBtn.addEventListener("click", async () => {
+        startBtn.addEventListener("click", function () {
             started = true;
-            try { await bgMusic.play(); } catch (e) { console.warn(e); }
+
+            // Intentar reproducir música, pero sin romper si el navegador la bloquea
+            var p = bgMusic.play();
+            if (p && p.catch) {
+                p.catch(function (e) {
+                    console.warn("Audio bloqueado por el navegador:", e);
+                });
+            }
+
             overlay.style.opacity = "0";
-            setTimeout(() => overlay.style.display = "none", 600);
+            setTimeout(function () {
+                overlay.style.display = "none";
+            }, 600);
         });
     </script>
 </body>
