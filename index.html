@@ -97,8 +97,10 @@
     <!-- Música -->
     <audio id="bgMusic" src="audio/cancion.mp3" loop></audio>
 
-    <!-- Three.js -->
+    <!-- Three.js + utilidades -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/FontLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
 
     <script>
         // ===== 1. CONFIGURACIÓN DE TUS FOTOS Y FRASES =====
@@ -106,31 +108,31 @@
 
         const photoItems = [
             { img: "img/foto1.jpeg",  text: "Te amo" },
-            { img: "img/foto2.jpeg",  text: "Mi cosita," },
+            { img: "img/foto2.jpeg",  text: "Mi amor" },
             { img: "img/foto3.jpeg",  text: "Mi princesa" },
-            { img: "img/foto4.jpeg",  text: "Eres el sueño" },
-            { img: "img/foto5.jpeg",  text: "que nunca" },
-            { img: "img/foto6.jpeg",  text: "quiero despertar," },
-            { img: "img/foto7.jpeg",  text: "la melodía" },
-            { img: "img/foto8.jpeg",  text: "que siempre" },
-            { img: "img/foto9.jpeg",  text: "quiero escuchar." },
-            { img: "img/foto10.jpeg", text: "Mi felicidad," },
-            { img: "img/foto11.jpeg", text: "Mi equipo favorito," },
-            { img: "img/foto12.jpeg", text: "Mi lugar seguro" },
-            { img: "img/foto13.jpeg", text: "No fuiste" },
-            { img: "img/foto14.jpeg", text: "antes ni después," },
-            { img: "img/foto15.jpeg", text: "fuiste justo" },
-            { img: "img/foto16.jpeg", text: "a tiempo" },
+            { img: "img/foto4.jpeg",  text: "Mi diosa" },
+            { img: "img/foto5.jpeg",  text: "Mi vida" },
+            { img: "img/foto6.jpeg",  text: "Eres preciosa" },
+            { img: "img/foto7.jpeg",  text: "Mi locura bonita" },
+            { img: "img/foto8.jpeg",  text: "Mi compañera" },
+            { img: "img/foto9.jpeg",  text: "Mi lugar seguro" },
+            { img: "img/foto10.jpeg", text: "Mi felicidad" },
+            { img: "img/foto11.jpeg", text: "Mi equipo favorito" },
+            { img: "img/foto12.jpeg", text: "Momentos contigo" },
+            { img: "img/foto13.jpeg", text: "Sonrisa que amo" },
+            { img: "img/foto14.jpeg", text: "Mi universo" },
+            { img: "img/foto15.jpeg", text: "Mi mejor historia" },
+            { img: "img/foto16.jpeg", text: "Eres mi hogar" },
             { img: "img/foto17.jpeg", text: "Gracias por todo" },
             { img: "img/foto18.jpeg", text: "Te elijo siempre" },
             { img: "img/foto19.jpeg", text: "Amor de mi vida" },
             { img: "img/foto20.jpeg", text: "Mi persona favorita" },
             { img: "img/foto21.jpeg", text: "Mi aventura" },
             { img: "img/foto22.jpeg", text: "Mi luz" },
-            { img: "img/foto23.jpeg", text: "Dame la mano" },
-            { img: "img/foto24.jpeg", text: "y danzaremos;" },
-            { img: "img/foto25.jpeg", text: "dame la mano" },
-            { img: "img/foto26.jpeg", text: "y me amarás." },
+            { img: "img/foto23.jpeg", text: "Mi cosita" },
+            { img: "img/foto24.jpeg", text: "Mi paz" },
+            { img: "img/foto25.jpeg", text: "Mi alegría" },
+            { img: "img/foto26.jpeg", text: "Mi risa" },
             { img: "img/foto27.jpeg", text: "Mi fiesta" },
             { img: "img/foto28.jpeg", text: "Mi complicidad" },
             { img: "img/foto29.jpeg", text: "Mi mejor plan" },
@@ -144,8 +146,8 @@
             { img: "img/foto37.jpeg", text: "Mi inspiración" },
             { img: "img/foto38.jpeg", text: "Mi mejor decisión" },
             { img: "img/foto39.jpeg", text: "Mi destino" },
-            { img: "img/foto40.jpeg", text: "Te amo 3 millones" },
-            { img: "img/foto41.jpeg", text: "tú y yo por siempre" }
+            { img: "img/foto40.jpeg", text: "Te amo infinito" },
+            { img: "img/foto41.jpeg", text: "Fin del universo: tú y yo" }
         ];
 
         // ===== 2. ESCENA THREE.JS =====
@@ -222,7 +224,36 @@
         moon.position.set(-11, 8, -12);
         scene.add(moon);
 
-        // Texto como Sprite
+        // Texto fijo en el planeta
+        const fontLoader = new THREE.FontLoader();
+        fontLoader.load(
+            "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",
+            function (font) {
+                const textGeo = new THREE.TextGeometry(
+                    "Eres el sueño que nunca quiero despertar,\nla melodía que siempre quiero escuchar",
+                    {
+                        font: font,
+                        size: 0.4,
+                        height: 0.05,
+                        curveSegments: 12
+                    }
+                );
+
+                const textMat = new THREE.MeshBasicMaterial({ color: 0xffb6ff });
+                const planetText = new THREE.Mesh(textGeo, textMat);
+
+                textGeo.computeBoundingBox();
+                const centerOffset =
+                    -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);
+
+                planetText.position.set(centerOffset, 3.2, 0);
+                planetText.rotation.y = 0;
+
+                scene.add(planetText);
+            }
+        );
+
+        // Texto como Sprite para los mensajes pequeños
         function createTextSprite(message) {
             const cvs = document.createElement("canvas");
             const ctx = cvs.getContext("2d");
@@ -268,14 +299,14 @@
                 transparent: true
             });
             const photoMesh = new THREE.Mesh(planeGeo, planeMat);
-            const basePhotoScale = 2.4; // tamaño normal
+            const basePhotoScale = 2.3; // tamaño normal
             photoMesh.scale.set(basePhotoScale, basePhotoScale, 1);
             scene.add(photoMesh);
 
             // Texto algo más compacto
             const label = createTextSprite(item.text);
-            const baseLabelScaleX = 4.2;
-            const baseLabelScaleY = 1.3;
+            const baseLabelScaleX = 4.0;
+            const baseLabelScaleY = 1.2;
             label.scale.set(baseLabelScaleX, baseLabelScaleY, 1);
             scene.add(label);
 
@@ -330,6 +361,7 @@
                 moon.position.x = -11 + Math.cos(t) * 3;
                 moon.position.z = -12 + Math.sin(t) * 3;
 
+                // Actualizamos órbitas
                 orbitObjects.forEach((obj) => {
                     obj.angle += obj.speed;
 
@@ -344,35 +376,50 @@
                     obj.photo.lookAt(camera.position);
                     obj.label.lookAt(camera.position);
 
-                    // --- Efecto "zoom" cuando pasan al frente ---
-                    // Vector desde el centro hacia la cámara (solo XZ)
+                    // --- Efecto de ZOOM cuando pasan al frente ---
+                    // Dirección de la cámara en XZ
                     const camDir = new THREE.Vector3(
                         camera.position.x,
                         0,
                         camera.position.z
                     ).normalize();
 
-                    // Vector desde el centro hacia la foto (solo XZ)
+                    // Dirección de la foto en XZ
                     const photoDir = new THREE.Vector3(
                         obj.photo.position.x,
                         0,
                         obj.photo.position.z
                     ).normalize();
 
-                    // Alineación entre 0 y 1 (1 = de frente)
-                    let alignment = camDir.dot(photoDir);
-                    alignment = THREE.MathUtils.clamp(alignment, 0, 1);
+                    // Alineación entre -1 y 1 (1 = de frente, -1 = detrás)
+                    let alignment = camDir.dot(photoDir); // -1..1
 
-                    // Escala suave: normal + 30% al frente
-                    const photoScale = obj.basePhotoScale * (1 + 0.3 * alignment);
-                    obj.photo.scale.set(photoScale, photoScale, 1);
+                    // Solo nos interesa cuando está en el "frente"
+                    if (alignment < 0) alignment = 0;
 
-                    const labelScaleX = obj.baseLabelScaleX * (1 + 0.25 * alignment);
-                    const labelScaleY = obj.baseLabelScaleY * (1 + 0.25 * alignment);
-                    obj.label.scale.set(labelScaleX, labelScaleY, 1);
+                    // Factor 0..1 para frente (más sensible a partir de 0.6)
+                    const factor = Math.max(0, alignment - 0.6) / 0.4; // 0.6→0, 1→1
+
+                    const targetPhotoScale =
+                        obj.basePhotoScale * (1 + 0.8 * factor); // hasta +80%
+                    const targetLabelScaleX =
+                        obj.baseLabelScaleX * (1 + 0.6 * factor);
+                    const targetLabelScaleY =
+                        obj.baseLabelScaleY * (1 + 0.6 * factor);
+
+                    // Interpolación suave hacia el tamaño objetivo
+                    obj.photo.scale.x +=
+                        (targetPhotoScale - obj.photo.scale.x) * 0.18;
+                    obj.photo.scale.y +=
+                        (targetPhotoScale - obj.photo.scale.y) * 0.18;
+
+                    obj.label.scale.x +=
+                        (targetLabelScaleX - obj.label.scale.x) * 0.18;
+                    obj.label.scale.y +=
+                        (targetLabelScaleY - obj.label.scale.y) * 0.18;
                 });
 
-                // Cámara girando alrededor del centro (más suave)
+                // Cámara girando alrededor del centro (suave)
                 camAngle += 0.0008;
                 camera.position.x = Math.sin(camAngle) * 26;
                 camera.position.z = Math.cos(camAngle) * 26;
