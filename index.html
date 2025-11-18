@@ -225,7 +225,7 @@
             0.1,
             1000
         );
-        camera.position.set(0, 10, 26);
+        camera.position.set(0, 10, 32);
 
         // Controles de órbita
         let controls = null;
@@ -236,7 +236,7 @@
             controls.autoRotate = true;
             controls.autoRotateSpeed = 0.4;
             controls.minDistance = 20;
-            controls.maxDistance = 40;
+            controls.maxDistance = 45;
             controls.maxPolarAngle = Math.PI * 0.9;
             controls.target.set(0, 2, 0);
         }
@@ -264,7 +264,7 @@
         const textureLoader = new THREE.TextureLoader();
 
         // Offset vertical para subir todo el universo
-        const SCENE_Y_OFFSET = 6;
+        const SCENE_Y_OFFSET = 9;
 
         // Planeta
         const planetTexture = textureLoader.load("img/planeta.png");
@@ -391,13 +391,13 @@
             });
             const photo = new THREE.Mesh(geo, mat);
 
-            const basePhotoScale = 2.0;
+            const basePhotoScale = 1.5;
             photo.scale.set(basePhotoScale, basePhotoScale, 1);
             scene.add(photo);
 
             const label = createTextSprite(item.text);
-            const baseLabelScaleX = 3.8;
-            const baseLabelScaleY = 1.2;
+            const baseLabelScaleX = 3.0;
+            const baseLabelScaleY = 1.0;
             label.scale.set(baseLabelScaleX, baseLabelScaleY, 1);
             scene.add(label);
 
@@ -481,11 +481,11 @@
                     const factor = Math.max(0, alignment - 0.6) / 0.4;
 
                     const targetPhotoScale =
-                        obj.basePhotoScale * (1 + 0.8 * factor);
+                        obj.basePhotoScale * (1 + 0.3 * factor);
                     const targetLabelScaleX =
-                        obj.baseLabelScaleX * (1 + 0.6 * factor);
+                        obj.baseLabelScaleX * (1 + 0.25 * factor);
                     const targetLabelScaleY =
-                        obj.baseLabelScaleY * (1 + 0.6 * factor);
+                        obj.baseLabelScaleY * (1 + 0.25 * factor);
 
                     obj.photo.scale.x +=
                         (targetPhotoScale - obj.photo.scale.x) * 0.18;
