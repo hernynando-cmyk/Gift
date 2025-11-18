@@ -21,7 +21,7 @@
             display: block;
         }
 
-        /* ===================== OVERLAY INICIAL ===================== */
+        /* ========= OVERLAY INICIAL ========= */
         #overlay {
             position: fixed;
             inset: 0;
@@ -50,7 +50,7 @@
             backdrop-filter: blur(6px);
         }
 
-        /* ===================== COMETA ===================== */
+        /* ========= COMETA ========= */
         #comet-layer {
             position: fixed;
             top: 26px;
@@ -61,7 +61,7 @@
             z-index: 5;
         }
 
-        /* Cabeza del cometa azulada */
+        /* Cabeza azulada tipo cometa real */
         #comet-head {
             position: absolute;
             width: 30px;
@@ -74,7 +74,7 @@
             transform: translateX(-200px);
         }
 
-        /* Rastro tipo la imagen azul/morado */
+        /* Rastro largo azul/morado */
         #comet-tail {
             position: absolute;
             top: 13px;
@@ -104,7 +104,7 @@
             text-shadow: 0 0 6px rgba(0,0,0,0.9);
         }
 
-        /* ===================== CORAZONES ===================== */
+        /* ========= CORAZONES ========= */
         .heart {
             position: fixed;
             font-size: 18px;
@@ -124,14 +124,14 @@
 <body>
     <canvas id="scene"></canvas>
 
-    <!-- Cometa en la parte superior -->
+    <!-- Capa del cometa -->
     <div id="comet-layer">
         <div id="comet-tail"></div>
         <div id="comet-head"></div>
         <div id="comet-text"></div>
     </div>
 
-    <!-- Overlay inicial -->
+    <!-- Pantalla inicial -->
     <div id="overlay">
         <h1>UNIVERSO PARA MI AMOR</h1>
         <button id="startBtn">Toca para iniciar ✨</button>
@@ -144,10 +144,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
 
     <script>
-        /* =============================================================
-           1. MENSAJE DEL COMETA
-           ============================================================= */
-
+        /* ============================================================
+           1. COMETA CON MENSAJE
+           ============================================================ */
         const cometMessage =
             "Eres el sueño que nunca quiero despertar, la melodía que siempre quiero escuchar";
 
@@ -156,8 +155,12 @@
         const cometText = document.getElementById("comet-text");
 
         let cometStartTime = null;
-        const COMET_DURATION = 50000; // más grande = más lento
-        const TEXT_PORTION = 0.7;     // porcentaje del recorrido donde ya está escrita toda la frase
+
+        // Velocidad del cometa (más grande = más lento)
+        const COMET_DURATION = 50000; // 50 s
+
+        // Qué porcentaje del recorrido tarda en escribir toda la frase
+        const TEXT_PORTION = 0.7;
 
         function updateComet(time) {
             if (!cometStartTime) cometStartTime = time;
@@ -170,33 +173,31 @@
             const endX   =  1.10 * W;
             const headX  = startX + (endX - startX) * progress;
 
-            // Posición de la cabeza
+            // Cabeza
             cometHead.style.transform = `translateX(${headX}px)`;
 
-            // Cola (larga y difuminada)
-            const maxTrail = W * 0.7;
-            const trailEnd = headX;
+            // Cola
+            const maxTrail  = W * 0.7;
+            const trailEnd  = headX;
             const trailStart = Math.max(trailEnd - maxTrail, 0);
             const trailWidth = Math.max(trailEnd - trailStart, 0);
 
             cometTail.style.left  = `${trailStart}px`;
             cometTail.style.width = `${trailWidth}px`;
 
-            // Progreso del texto (se completa antes de que el cometa salga)
+            // Texto (se completa antes del final del recorrido)
             const textProgress = Math.min(1, t / (COMET_DURATION * TEXT_PORTION));
             const chars = Math.floor(textProgress * cometMessage.length);
             cometText.textContent = cometMessage.slice(0, chars);
 
-            // Posición del texto (aprox. centro del rastro)
             const textCenter = trailStart + trailWidth * 0.5;
             const textX = Math.min(Math.max(textCenter - 180, 10), W - 220);
             cometText.style.left = `${textX}px`;
         }
 
-        /* =============================================================
+        /* ============================================================
            2. UNIVERSO 3D
-           ============================================================= */
-
+           ============================================================ */
         const canvas = document.getElementById("scene");
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
@@ -212,16 +213,19 @@
         );
         camera.position.set(0, 10, 26);
 
-        // Controles de órbita (mouse arrastrando)
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.4;
-        controls.minDistance = 20;
-        controls.maxDistance = 40;
-        controls.maxPolarAngle = Math.PI * 0.9; // hasta casi por debajo
-        controls.target.set(0, 2, 0);
+        // Controles de órbita (arrastrar con el mouse / dedo)
+        let controls = null;
+        if (THREE.OrbitControls) {
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.4;
+            controls.minDistance = 20;
+            controls.maxDistance = 40;
+            controls.maxPolarAngle = Math.PI * 0.9;
+            controls.target.set(0, 2, 0);
+        }
 
         // Luces
         scene.add(new THREE.AmbientLight(0xffffff, 0.9));
@@ -266,7 +270,7 @@
         ring.rotation.x = Math.PI / 2.3;
         scene.add(ring);
 
-        // Luna realista con textura (guarda tu luna como img/luna.png)
+        // Luna con textura realista (guarda la imagen como img/luna.png)
         const moonTexture = textureLoader.load("img/luna.png");
         const moon = new THREE.Mesh(
             new THREE.SphereGeometry(1.6, 48, 48),
@@ -306,7 +310,7 @@
 
         const orbitObjects = [];
 
-        // Lista de fotos (igual que antes)
+        // Lista de fotos
         const photoItems = [
             { img: "img/foto1.jpeg", text: "Te amo" },
             { img: "img/foto2.jpeg", text: "Mi amor" },
@@ -363,7 +367,7 @@
             const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
             const photo = new THREE.Mesh(geo, mat);
 
-            const basePhotoScale = 2.0; // un pelín más pequeñas para menos solape
+            const basePhotoScale = 2.0;
             photo.scale.set(basePhotoScale, basePhotoScale, 1);
             scene.add(photo);
 
@@ -374,8 +378,8 @@
             scene.add(label);
 
             const radius = minRadius + Math.random() * (maxRadius - minRadius);
-            const yBase  = -1 + Math.random() * 4;      // altura base [-1, 3]
-            const yAmp   = 0.6 + Math.random() * 0.5;   // oscilación
+            const yBase  = -1 + Math.random() * 4;
+            const yAmp   = 0.6 + Math.random() * 0.5;
 
             orbitObjects.push({
                 angle,
@@ -408,7 +412,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight, false);
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-            cometStartTime = null; // para que el cometa se recalcule con el nuevo ancho
+            cometStartTime = null; // recalcular trayectoria del cometa
         }
         window.addEventListener("resize", onResize);
         onResize();
@@ -419,16 +423,13 @@
             requestAnimationFrame(animate);
 
             if (started) {
-                // Rotación del planeta y anillo
                 planet.rotation.y += 0.002;
                 ring.rotation.z += 0.001;
 
-                // Movimiento de la luna alrededor
                 const t = Date.now() * 0.0004;
                 moon.position.x = -13 + Math.cos(t) * 3;
                 moon.position.z = -15 + Math.sin(t) * 3;
 
-                // Orbitas de fotos/textos
                 orbitObjects.forEach(obj => {
                     obj.angle += obj.speed;
 
@@ -442,7 +443,6 @@
                     obj.photo.lookAt(camera.position);
                     obj.label.lookAt(camera.position);
 
-                    // Zoom suave al frente
                     const camDir = new THREE.Vector3(camera.position.x, 0, camera.position.z).normalize();
                     const photoDir = new THREE.Vector3(x, 0, z).normalize();
                     let alignment = camDir.dot(photoDir);
@@ -463,17 +463,17 @@
                 // Cometa
                 updateComet(time);
 
-                // Controles de cámara (autoRotate + drag)
-                controls.update();
+                // Controles de cámara
+                if (controls) controls.update();
             }
 
             renderer.render(scene, camera);
         }
         animate();
 
-        /* =============================================================
+        /* ============================================================
            3. INICIO
-           ============================================================= */
+           ============================================================ */
         const overlay = document.getElementById("overlay");
         const startBtn = document.getElementById("startBtn");
         const bgMusic = document.getElementById("bgMusic");
