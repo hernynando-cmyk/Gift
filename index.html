@@ -391,13 +391,13 @@
             });
             const photo = new THREE.Mesh(geo, mat);
 
-            const basePhotoScale = 1.5;
+            const basePhotoScale = 1.0;
             photo.scale.set(basePhotoScale, basePhotoScale, 1);
             scene.add(photo);
 
             const label = createTextSprite(item.text);
-            const baseLabelScaleX = 3.0;
-            const baseLabelScaleY = 1.0;
+            const baseLabelScaleX = 2.0;
+            const baseLabelScaleY = 0.5;
             label.scale.set(baseLabelScaleX, baseLabelScaleY, 1);
             scene.add(label);
 
