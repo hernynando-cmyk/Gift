@@ -264,7 +264,7 @@
         const textureLoader = new THREE.TextureLoader();
 
         // Offset vertical para subir todo el universo
-        const SCENE_Y_OFFSET = 7.5;
+        const SCENE_Y_OFFSET = 6.5;
 
         // Planeta
         const planetTexture = textureLoader.load("img/planeta.png");
@@ -391,7 +391,7 @@
             });
             const photo = new THREE.Mesh(geo, mat);
 
-            const basePhotoScale = 1.5;
+            const basePhotoScale = 2.0;
             photo.scale.set(basePhotoScale, basePhotoScale, 1);
             scene.add(photo);
 
